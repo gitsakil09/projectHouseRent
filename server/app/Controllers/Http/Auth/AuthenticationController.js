@@ -51,10 +51,11 @@ class AuthenticationController {
    */
   async postLogin({ response, request, auth }) {
     try {
-      console.log(request.all())
+      // console.log(request.all())
       const { email, password } = request.all()
       // attempting to login the client
       const client = await auth.withRefreshToken().attempt(email, password)
+      // returning success response
       return response.json({
         CODE: 'LOGIN_SUCCESS',
         TYPE: 'success',
@@ -62,13 +63,22 @@ class AuthenticationController {
         data: client,
       })
     } catch (loginError) {
-      console.log(loginError.name)
       if (loginError && loginError.name === 'UserNotFoundException') {
         return response.json({
           CODE: 'LOGIN_ERROR',
           TYPE: 'error',
           MESSAGE:
-            'YOur provided credentials are not correct.Pkease try again with the correct creds.',
+            'Your provided credentials are not correct.Pkease try again with the correct creds.',
+        })
+      } else if (
+        loginError &&
+        loginError.name === 'PasswordMisMatchException'
+      ) {
+        return response.json({
+          CODE: 'LOGIN_ERROR',
+          TYPE: 'error',
+          MESSAGE:
+            'Your provided credentials are not correct.Pkease try again with the correct creds.',
         })
       }
     }

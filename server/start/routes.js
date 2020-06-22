@@ -19,7 +19,9 @@ const { RouteGroup } = require('@adonisjs/framework/src/Route/Manager')
 const Route = use('Route')
 
 Route.group(() => {
-  Route.post('/login', 'AuthenticationController.postLogin').as('user.login')
+  Route.post('/login', 'AuthenticationController.postLogin')
+    .as('user.login')
+    .validator('Login')
   Route.post('/registration', 'AuthenticationController.postRegistration')
     .as('user.signup')
     .validator('Registration')

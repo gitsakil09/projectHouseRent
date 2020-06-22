@@ -38,6 +38,8 @@ export default {
   plugins: [
     /** API Routes */
     { src: '~/plugins/APIRoutes', mode: 'client' },
+    // Custom Plugins for Notifications module
+    { src: '~/plugins/Notifications', mode: 'client' },
   ],
   /*
    ** Nuxt.js dev-modules

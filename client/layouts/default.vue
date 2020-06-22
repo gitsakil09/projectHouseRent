@@ -45,10 +45,13 @@
         </template>
         <v-list>
           <v-list-item-group>
-            <v-list-item @click="loginDialog = true">
+            <v-list-item
+              @click="loginDialog = true"
+              v-if="!$auth || !$auth.user"
+            >
               <v-list-item-title>Login</v-list-item-title>
             </v-list-item>
-            <v-list-item>
+            <v-list-item v-if="$auth && $auth.user" @click="logout">
               <v-list-item-title>Logout</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -260,11 +263,11 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'HouseRent',
-      loginDialog: true,
+      loginDialog: false,
       signUpDialog: false,
       loginInfo: {
         email: 'a@a.com',
-        password: '12345',
+        password: '123456',
       },
       rules: {
         required: (v) => !!v || 'Value Required.',
@@ -322,6 +325,30 @@ export default {
         }
       }
     },
+    'loginInfo.email': function (value) {
+      if (value) {
+        if (
+          this.errors &&
+          this.errors.find((error) => error.field === 'loginInfo.email')
+        ) {
+          this.errors.splice(
+            this.errors.find((error) => error.field === 'loginInfo.email')
+          )
+        }
+      }
+    },
+    'loginInfo.password': function (value) {
+      if (value) {
+        if (
+          this.errors &&
+          this.errors.find((error) => error.field === 'loginInfo.password')
+        ) {
+          this.errors.splice(
+            this.errors.find((error) => error.field === 'loginInfo.password')
+          )
+        }
+      }
+    },
   },
   methods: {
     /**
@@ -331,18 +358,63 @@ export default {
     async tryLogin() {
       let _this = this
       try {
+        _this.errors = []
         _this.isLoginLoading = true
         await _this.$auth
           .loginWith('local', { data: _this.loginInfo })
           .then((response) => {
-            // _this.loginDialog = false
             _this.isLoginLoading = false
+            if (response && response.STATUS === 400) {
+              _this.errors = response.MESSAGES
+            } else if (
+              response &&
+              response.data &&
+              response.data.TYPE === 'success'
+            ) {
+              _this.loginDialog = false
+              _this.$toast.success(
+                response.data.MESSAGE,
+                'topRight',
+                5000,
+                'Success'
+              )
+            } else if (
+              response &&
+              response.data &&
+              response.data.TYPE === 'error'
+            ) {
+              _this.$toast.error(
+                response.data.MESSAGE,
+                'topRight',
+                5000,
+                'error'
+              )
+            } else {
+              _this.$toast.error(
+                'Something went wrong.Please contact with the administrator',
+                'topRight',
+                5000,
+                'Error'
+              )
+            }
           })
           .catch((error) => {
             _this.isLoginLoading = false
+            _this.$toast.error(
+              'Something went wrong.Please contact with the administrator',
+              'topRight',
+              5000,
+              'Error'
+            )
           })
       } catch (loginError) {
         _this.isLoginLoading = false
+        _this.$toast.error(
+          'Something went wrong.Please contact with the administrator',
+          'topRight',
+          5000,
+          'Error'
+        )
       }
     },
     /**
@@ -352,6 +424,7 @@ export default {
     async tryRegistration() {
       let _this = this
       try {
+        _this.errors = []
         _this.isSignUpLoading = true
         await _this.$axios
           .$post(_this.$APIRoutes.registration, {
@@ -359,18 +432,49 @@ export default {
           })
           .then((response) => {
             _this.isSignUpLoading = false
-            console.log(response)
             if (response && response.STATUS === 400) {
               _this.errors = response.MESSAGES
+            } else if (response && response.TYPE === 'success') {
+              _this.signUpDialog = false
+              _this.$toast.success(
+                response.MESSAGE,
+                'topRight',
+                5000,
+                'success'
+              )
+            } else if (response && response.TYPE === 'error') {
+              _this.$toast.error(response.MESSAGE, 'topRight', 5000, 'error')
             }
           })
           .catch((error) => {
             _this.isSignUpLoading = false
-            console.log(error)
+            _this.$toast.error(
+              'Something went wrong.Please contact with the administrator',
+              'topRight',
+              5000,
+              'error'
+            )
           })
       } catch (signUpError) {
         _this.isSignUpLoading = false
-        console.log(signUpError)
+        _this.$toast.error(
+          'Something went wrong.Please contact with the administrator',
+          'topRight',
+          5000,
+          'error'
+        )
+      }
+    },
+    /**
+     * Logging Out
+     * @param null
+     */
+    async logout() {
+      try {
+        this.$auth.logout()
+        return this.$router.push('/')
+      } catch (logoutError) {
+        console.log(logoutError)
       }
     },
   },
