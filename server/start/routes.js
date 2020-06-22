@@ -1,5 +1,7 @@
 'use strict'
 
+const { RouteGroup } = require('@adonisjs/framework/src/Route/Manager')
+
 /*
 |--------------------------------------------------------------------------
 | Routes
@@ -16,4 +18,11 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.on('/').render('welcome')
+Route.group(() => {
+  Route.post('/login', 'AuthenticationController.postLogin').as('user.login')
+  Route.post('/registration', 'AuthenticationController.postRegistration')
+    .as('user.signup')
+    .validator('Registration')
+})
+  .namespace('Auth')
+  .prefix('/api/v1')
