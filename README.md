@@ -18,3 +18,12 @@ Skype: sakil_ruet
 5. Migrate the files to produce database tables by running `adonis migration:run`
 6. Run both server by `adonis serve --dev`  and client  `npm run dev`
 7. Hola!!!
+
+## Features
+1. VueJS
+2. NuxtJS
+3. SSR Enabled
+4. NuxtJS Auth Module Integrated
+5. NodeJS
+6. AdonisJS
+7. Highly Scalable
