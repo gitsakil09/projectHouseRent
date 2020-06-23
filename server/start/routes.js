@@ -28,3 +28,40 @@ Route.group(() => {
 })
   .namespace('Auth')
   .prefix('/api/v1')
+
+Route.group(() => {
+  Route.get('/users/all', 'RentController.getAllUsers').as('users.all')
+  Route.get('/rents/all', 'RentController.getAllRents').as('rents.all')
+  Route.get(
+    '/rents/detail/show/:rentId',
+    'RentController.getRentShowDetail'
+  ).as('rents.detail.show')
+  Route.get('/rents/search/all', 'RentController.getAllSearchedRents').as(
+    'rents.search.all'
+  )
+})
+  .namespace('Rent')
+  .prefix('/api/v1')
+
+Route.group(() => {
+  Route.get('/rents/your/all', 'RentController.getAllYourRents').as('rents.all')
+  Route.post('/rents/add', 'RentController.postAddRent').as('rents.add')
+  Route.post('/rents/delete', 'RentController.postDeleteRent').as(
+    'rents.delete'
+  )
+  Route.get('/rents/detail/edit/:rentId', 'RentController.getRentDetail').as(
+    'rents.detail.edit'
+  )
+  Route.post('/rents/update', 'RentController.postUpdateRent').as(
+    'rents.update'
+  )
+  Route.post('/rents/review/add', 'RentController.postAddRentReview').as(
+    'rents.review.add'
+  )
+  Route.post('/rents/stat/add', 'RentController.postAddRentStat').as(
+    'rents.stat.add'
+  )
+})
+  .middleware(['auth:jwt'])
+  .namespace('Rent')
+  .prefix('/api/v1')

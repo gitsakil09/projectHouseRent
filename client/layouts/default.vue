@@ -1,20 +1,8 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-    >
+    <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app>
       <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
+        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -31,10 +19,10 @@
       </v-btn>
       <!-- <v-btn icon @click.stop="clipped = !clipped">
         <v-icon>mdi-application</v-icon>
-      </v-btn> -->
+      </v-btn>-->
       <!-- <v-btn icon @click.stop="fixed = !fixed">
         <v-icon>mdi-minus</v-icon>
-      </v-btn> -->
+      </v-btn>-->
       <v-toolbar-title v-text="title" />
       <v-spacer />
       <v-menu left bottom>
@@ -45,10 +33,7 @@
         </template>
         <v-list>
           <v-list-item-group>
-            <v-list-item
-              @click="loginDialog = true"
-              v-if="!$auth || !$auth.user"
-            >
+            <v-list-item @click="loginDialog = true" v-if="!$auth || !$auth.user">
               <v-list-item-title>Login</v-list-item-title>
             </v-list-item>
             <v-list-item v-if="$auth && $auth.user" @click="logout">
@@ -59,7 +44,7 @@
       </v-menu>
       <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-menu</v-icon>
-      </v-btn> -->
+      </v-btn>-->
     </v-app-bar>
     <v-main>
       <v-container>
@@ -104,9 +89,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn small color="green darken-1" @click="loginDialog = false">
-            Close
-          </v-btn>
+          <v-btn small color="green darken-1" @click="loginDialog = false">Close</v-btn>
           <v-btn
             small
             color="primary"
@@ -115,9 +98,7 @@
               !loginInfo.email || !loginInfo.password || isLoginLoading
             "
             @click="tryLogin"
-          >
-            Login
-          </v-btn>
+          >Login</v-btn>
         </v-card-actions>
         <v-card-actions>
           <div class="ma-2">
@@ -129,8 +110,7 @@
                 signUpDialog = true
                 loginDialog = false
               "
-              >Sign Up</v-btn
-            >
+            >Sign Up</v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -190,9 +170,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn small color="green darken-1" @click="signUpDialog = false">
-            Close
-          </v-btn>
+          <v-btn small color="green darken-1" @click="signUpDialog = false">Close</v-btn>
           <v-btn
             small
             color="primary"
@@ -204,9 +182,7 @@
               isSignUpLoading
             "
             @click="tryRegistration"
-          >
-            Sign Up
-          </v-btn>
+          >Sign Up</v-btn>
         </v-card-actions>
         <v-card-actions>
           <div class="ma-2">
@@ -218,8 +194,7 @@
                 loginDialog = true
                 signUpDialog = false
               "
-              >Login</v-btn
-            >
+            >Login</v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -278,7 +253,7 @@ export default {
       isSignUpLoading: false,
       signUpInfo: {
         username: 'John Doe',
-        email: 'a@a.com',
+        email: 'john@john.com',
         password: '12345',
       },
       errors: [],

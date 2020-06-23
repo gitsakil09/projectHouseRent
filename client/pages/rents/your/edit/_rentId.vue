@@ -4,28 +4,29 @@
       <v-flex xs12 sm12 md12>
         <v-card>
           <v-card-title primary-title class="text-center"
-            >Add New Rent</v-card-title
+            >Edit Rent</v-card-title
           >
           <v-card-text>
             <v-layout row wrap>
               <v-flex xs12>
-                <v-form ref="addRentForm">
+                <v-form ref="editRentForm">
                   <v-container>
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
                           name="House Name"
                           label="House Name *"
-                          v-model="rentInfo.house_name"
+                          v-model="editRentInfo.house_name"
                           :rules="[rules.required]"
                           :error-messages="
                             errors &&
                             errors.find(
-                              (error) => error.field === 'rentInfo.house_name'
+                              (error) =>
+                                error.field === 'editRentInfo.house_name'
                             )
                               ? errors.find(
                                   (error) =>
-                                    error.field === 'rentInfo.house_name'
+                                    error.field === 'editRentInfo.house_name'
                                 ).message
                               : ''
                           "
@@ -35,7 +36,7 @@
                         <v-autocomplete
                           label="Total floors *"
                           :items="floors"
-                          v-model="rentInfo.total_floor_no"
+                          v-model="editRentInfo.total_floor_no"
                           item-text="text"
                           item-value="id"
                           :rules="[rules.required]"
@@ -45,7 +46,7 @@
                         <v-autocomplete
                           label="Rented floor *"
                           :items="floors"
-                          v-model="rentInfo.rented_floor_no"
+                          v-model="editRentInfo.rented_floor_no"
                           item-text="text"
                           item-value="id"
                           :rules="[rules.required]"
@@ -54,7 +55,7 @@
                       <v-col cols="12" md="2">
                         <v-text-field
                           label="Rented flat *"
-                          v-model="rentInfo.rented_flat_no"
+                          v-model="editRentInfo.rented_flat_no"
                           :rules="[rules.required]"
                         ></v-text-field>
                       </v-col>
@@ -67,7 +68,7 @@
                             { text: 'Yes', value: 'yes' },
                             { text: 'No', value: 'no' },
                           ]"
-                          v-model="rentInfo.gas_available"
+                          v-model="editRentInfo.gas_available"
                           item-text="text"
                           item-value="value"
                           :rules="[rules.required]"
@@ -80,7 +81,7 @@
                             { text: 'Yes', value: 'yes' },
                             { text: 'No', value: 'no' },
                           ]"
-                          v-model="rentInfo.electricity_available"
+                          v-model="editRentInfo.electricity_available"
                           item-text="text"
                           item-value="value"
                           :rules="[rules.required]"
@@ -93,7 +94,7 @@
                             { text: 'Yes', value: 'yes' },
                             { text: 'No', value: 'no' },
                           ]"
-                          v-model="rentInfo.water_available"
+                          v-model="editRentInfo.water_available"
                           item-text="text"
                           item-value="value"
                           :rules="[rules.required]"
@@ -105,17 +106,18 @@
                         <v-textarea
                           name="Address"
                           label="Address *"
-                          v-model="rentInfo.address"
+                          v-model="editRentInfo.address"
                           :rules="[rules.required]"
                           rows="3"
                           :error-messages="
                             errors &&
                             errors.find(
-                              (error) => error.field === 'rentInfo.house_name'
+                              (error) =>
+                                error.field === 'editRentInfo.house_name'
                             )
                               ? errors.find(
                                   (error) =>
-                                    error.field === 'rentInfo.house_name'
+                                    error.field === 'editRentInfo.house_name'
                                 ).message
                               : ''
                           "
@@ -125,7 +127,7 @@
                     <v-row>
                       <v-col cols="12" md="12">
                         <v-file-input
-                          v-model="rentInfo.pictures"
+                          v-model="pictures"
                           counter
                           label="Pictures *"
                           multiple
@@ -147,10 +149,48 @@
                               v-else-if="index === 2"
                               class="overline grey--text text--darken-3 mx-2"
                             >
-                              +{{ rentInfo.pictures.length - 2 }} File(s)
+                              +{{ editRentInfo.pictures.length - 2 }} File(s)
                             </span>
                           </template>
                         </v-file-input>
+                        <!-- Showing Pictures -->
+                        <v-card>
+                          <v-container fluid>
+                            <v-row>
+                              <v-col
+                                v-for="(picture, index) in pictureArray"
+                                :key="index"
+                                class="d-flex child-flex"
+                                cols="4"
+                              >
+                                <v-card flat tile class="d-flex">
+                                  <v-img
+                                    :src="`${picture}`"
+                                    :lazy-src="`https://picsum.photos/10/6?image=${
+                                      index * 5 + 10
+                                    }`"
+                                    aspect-ratio="1"
+                                    class="grey lighten-2"
+                                  >
+                                    <template v-slot:placeholder>
+                                      <v-row
+                                        class="fill-height ma-0"
+                                        align="center"
+                                        justify="center"
+                                      >
+                                        <v-progress-circular
+                                          indeterminate
+                                          color="grey lighten-5"
+                                        ></v-progress-circular>
+                                      </v-row>
+                                    </template>
+                                  </v-img>
+                                </v-card>
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                        </v-card>
+                        <!-- End of Showing Pictures -->
                       </v-col>
                     </v-row>
                   </v-container>
@@ -162,11 +202,11 @@
             <v-btn
               small
               color="primary"
-              :loading="isAddRentLoading"
-              :disabled="!isValidToAdd || isAddRentLoading"
-              @click="addRent"
+              :loading="isUpdateRentLoading"
+              :disabled="!isValidToUpdate || isUpdateRentLoading"
+              @click="updateRent"
             >
-              <v-icon class="mr-1" small>mdi-plus</v-icon>Add
+              <v-icon class="mr-1" small>mdi-update</v-icon>Update
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -176,30 +216,17 @@
 </template>
 <script>
 export default {
-  name: 'AddRent',
+  name: 'ShowEditRent',
   middleware: ['auth'],
-  head() {
-    return {
-      titleTemplate: 'Add Rent | %s',
-    }
-  },
   data() {
     return {
       rules: {
         required: (v) => !!v || 'Value Required.',
       },
-      isAddRentLoading: false,
-      rentInfo: {
-        house_name: 'sasasas',
-        total_floor_no: 10,
-        rented_floor_no: 5,
-        rented_flat_no: '5A',
-        gas_available: 'yes',
-        electricity_available: 'yes',
-        water_available: 'yes',
-        address: 'address',
-        pictures: [],
-      },
+      isUpdateRentLoading: false,
+      editRentInfo: [],
+      pictures: [],
+      pictureArray: [],
       errors: [],
       users: [],
       floors: [
@@ -229,24 +256,26 @@ export default {
       ],
     }
   },
-  async mounted() {},
+  async mounted() {
+    await this.getRentDetail(this.$route.params.rentId)
+  },
   computed: {
     /**
      * Checking Validity to add
      */
-    isValidToAdd() {
+    isValidToUpdate() {
       if (
-        this.rentInfo.house_name &&
-        this.rentInfo.house_name &&
-        this.rentInfo.total_floor_no &&
-        this.rentInfo.rented_floor_no &&
-        this.rentInfo.rented_flat_no &&
-        this.rentInfo.gas_available &&
-        this.rentInfo.electricity_available &&
-        this.rentInfo.water_available &&
-        this.rentInfo.address &&
-        this.rentInfo.pictures &&
-        this.rentInfo.pictures.length > 0
+        this.editRentInfo.house_name &&
+        this.editRentInfo.house_name &&
+        this.editRentInfo.total_floor_no &&
+        this.editRentInfo.rented_floor_no &&
+        this.editRentInfo.rented_flat_no &&
+        this.editRentInfo.gas_available &&
+        this.editRentInfo.electricity_available &&
+        this.editRentInfo.water_available &&
+        this.editRentInfo.address &&
+        this.editRentInfo.pictures &&
+        this.editRentInfo.pictures.length > 0
       ) {
         return true
       } else {
@@ -254,57 +283,75 @@ export default {
       }
     },
   },
-  watch: {},
+  watch: {
+    editRentInfo: function () {
+      let pictures = this.editRentInfo.pictures
+      // splitting the images
+      this.pictureArray = pictures ? pictures.split('/#/') : []
+      if (this.pictureArray && this.pictureArray.length > 0) {
+        this.pictureArray.splice(this.pictureArray.length - 1)
+      }
+    },
+  },
   methods: {
     /**
-     * Getting All the Users
-     * @param null
+     * Getting Single rent Detail
+     * @param rentId
      */
-    async getAllUsers() {
+    async getRentDetail(rentId) {
       let _this = this
       try {
         await _this.$axios
-          .$get(_this.$APIRoutes.allUsers)
+          .$get(_this.$APIRoutes.detailRent + '/' + rentId)
           .then((response) => {
-            _this.users = response
+            _this.editRentInfo = response
+            _this.editRentInfo.gas_available =
+              _this.editRentInfo.gas_available === 1 ? 'yes' : 'no'
+            _this.editRentInfo.electricity_available =
+              _this.editRentInfo.electricity_available === 1 ? 'yes' : 'no'
+            _this.editRentInfo.water_available =
+              _this.editRentInfo.water_available === 1 ? 'yes' : 'no'
           })
           .catch((error) => {})
-      } catch (getUserError) {}
+      } catch (detailError) {
+        console.log(detailError)
+      }
     },
     /**
-     * Adding Rent
-     * @param rentInfo
+     * Updating Rent
+     * @param editRentInfo
      */
-    async addRent() {
+    async updateRent() {
       let _this = this
       try {
-        _this.isAddRentLoading = true
+        _this.isUpdateRentLoading = true
         let formData = new FormData()
-        if (_this.rentInfo.pictures && _this.rentInfo.pictures.length > 0) {
-          for (const picture of _this.rentInfo.pictures) {
+        if (_this.pictures && _this.pictures.length > 0) {
+          for (const picture of _this.pictures) {
             formData.append('file', picture)
           }
         }
         // appending the other data
-        formData.append('house_name', _this.rentInfo.house_name)
-        formData.append('total_floor_no', _this.rentInfo.total_floor_no)
-        formData.append('rented_floor_no', _this.rentInfo.rented_floor_no)
-        formData.append('rented_flat_no', _this.rentInfo.rented_flat_no)
-        formData.append('gas_available', _this.rentInfo.gas_available)
+        formData.append('rent_id', _this.editRentInfo.id)
+        formData.append('house_name', _this.editRentInfo.house_name)
+        formData.append('total_floor_no', _this.editRentInfo.total_floor_no)
+        formData.append('rented_floor_no', _this.editRentInfo.rented_floor_no)
+        formData.append('rented_flat_no', _this.editRentInfo.rented_flat_no)
+        formData.append('gas_available', _this.editRentInfo.gas_available)
         formData.append(
           'electricity_available',
-          _this.rentInfo.electricity_available
+          _this.editRentInfo.electricity_available
         )
-        formData.append('water_available', _this.rentInfo.water_available)
-        formData.append('address', _this.rentInfo.address)
+        formData.append('water_available', _this.editRentInfo.water_available)
+        formData.append('address', _this.editRentInfo.address)
         await _this.$axios
-          .$post(_this.$APIRoutes.addRent, formData, {
+          .$post(_this.$APIRoutes.updateRent, formData, {
             headers: {
               'content-type': 'multipart/form-data',
             },
           })
           .then((response) => {
-            _this.isAddRentLoading = false
+            _this.isUpdateRentLoading = false
             if (response && response.TYPE === 'success') {
               _this.$toast.success(
                 response.MESSAGE,
@@ -318,7 +365,7 @@ export default {
             }
           })
           .catch((error) => {
-            _this.isAddRentLoading = false
+            _this.isUpdateRentLoading = false
             _this.$toast.error(
               'Something went wrong.Please contact with the administrator',
               'topRight',
@@ -327,7 +374,7 @@ export default {
             )
           })
       } catch (addRentError) {
-        _this.isAddRentLoading = false
+        _this.isUpdateRentLoading = false
         _this.$toast.error(
           'Something went wrong.Please contact with the administrator',
           'topRight',
